@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <canvas id="canvas2"></canvas>
+    <script>
+
+     var canvas = document.getElementById('canvas');
+    var  context = canvas.getContext('2d');
+     var shapeCanvas = document.createElement('canvas');
+    var shapeContext = shapeCanvas.getContext('2d');
+     canvas.width = 700;
+     shapeCanvas.width = 700;
+     canvas.height=200;
+     shapeCanvas.height=200;
+     shapeContext.font = 'bold ' + 200 + 'px '+ 'Avenir, Helvetica Neue, Helvetica, Arial, sans-serif';
+        shapeContext.fillText("123456",0,150);
+        var dot = shapeContext.getImageData(0,0,700,200).data;
+     var renderDot=[], x=5,y= 5;
+        for(var i=20;i<dot.length;i+=(10*4)){
+            if(dot[i+3]>0){
+
+                renderDot.push({
+                    x:x,
+                    y:y,
+                    sx:350,
+                    sy:100,
+                    dx:(x-350)/100,
+                    dy:(y-100)/100
+                })
+            }
+
+            if(x>700){
+                x=5;
+                y+=10;
+                i += 10 * 4 * 700;
+            }
+            x+=10;
+        }
+     var z=0;
+     function animate(){
+         context.clearRect(0, 0, 700, 200);
+         for(var j=0;j<renderDot.length;j++){
+             renderDot[j].sx = renderDot[j].sx + renderDot[j].dx;
+             renderDot[j].sy = renderDot[j].sy + renderDot[j].dy;
+             context.fillStyle = "#ff0000";//返回的是 #000000类型
+             context.beginPath();
+             context.arc(renderDot[j].sx, renderDot[j].sy, 5, 0, 2 * Math.PI, true);
+             context.closePath();
+             context.fill();
+
+         }
+         z++;
+         if(z<100){
+             setTimeout(animate,10);
+         }
+     }
+       animate();
+    </script>
+</body>
+</html>
