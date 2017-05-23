@@ -4,48 +4,96 @@
     <title></title>
 </head>
 <body>
+<style>
+    html,body{
+        height: 100%;
+    }
+</style>
     <canvas id="canvas"></canvas>
-    <canvas id="canvas2"></canvas>
+    <!--<canvas id="canvas2"></canvas>-->
+    <input type="text" id="input"/>
+    <span id="start" onclick="start()">开始</span>
     <script>
+        var S={
 
-     var canvas = document.getElementById('canvas');
-    var  context = canvas.getContext('2d');
-     var shapeCanvas = document.createElement('canvas');
-    var shapeContext = shapeCanvas.getContext('2d');
-     canvas.width = 700;
-     shapeCanvas.width = 700;
-     canvas.height=200;
-     shapeCanvas.height=200;
-     shapeContext.font = 'bold ' + 200 + 'px '+ 'Avenir, Helvetica Neue, Helvetica, Arial, sans-serif';
-        shapeContext.fillText("123456",0,150);
-        var dot = shapeContext.getImageData(0,0,700,200).data;
-     var renderDot=[], x=5,y= 5;
-        for(var i=20;i<dot.length;i+=(10*4)){
-            if(dot[i+3]>0){
+        };
+         S.render = (function (){
+             var canvas = document.getElementById('canvas');
+             var  context = canvas.getContext('2d');
+             var fontSize ;
+             init();
+             function init(){
+                 var canvas = document.getElementById('canvas');
+                 var  context = canvas.getContext('2d');
+                 canvas.width = document.body.clientWidth;
+                 canvas.height = document.body.clientHeight;
+             }
+        }());
+        S.shape = function(){
+            var shapeCanvas = document.createElement('canvas');
+            var shapeContext = shapeCanvas.getContext('2d');
+            shapeCanvas.width = document.body.clientWidth;
+            shapeCanvas.height = document.body.clientHeight;
+            shapeContext.textBaseline = 'middle';
+//            shapeContext.textAlign = 'center';
+//            function size(){
 
-                renderDot.push({
-                    x:x,
-                    y:y,
-                    sx:350,
-                    sy:100,
-                    dx:(x-350)/100,
-                    dy:(y-100)/100
-                })
+//            }
+            function text(){
+                var value = document.getElementById("input").value;
+                console.log(shapeContext.measureText(value).width);
+                var fontSize = Math.min(Math.min(500,shapeCanvas.width,shapeCanvas.height)*0.45,shapeCanvas.width/shapeContext.measureText(value).width*0.8*500);
+                shapeContext.font = 'bold ' + fontSize + 'px '+ 'Avenir, Helvetica Neue, Helvetica, Arial, sans-serif';
+                shapeContext.fillText(value,100,200);
+                return getDots();
             }
-
-            if(x>700){
-                x=5;
-                y+=10;
-                i += 10 * 4 * 700;
+             function getDots(){
+                 var dot = shapeContext.getImageData(0,0,shapeCanvas.width,shapeCanvas.height).data;
+                 var renderDot=[], x=5,y= 5;
+                 var line = 0;
+                 for(var i=0;i<dot.length;i+=(10*4)){
+                     if(dot[i+3]>0){
+                         renderDot.push({
+                             x:x,
+                             y:y,
+                             sx:shapeCanvas.width/2,
+                             sy:shapeCanvas.height/2,
+                             dx:(x-(shapeCanvas.width/2))/100,
+                             dy:(y-(shapeCanvas.height/2))/100
+                         });
+                     }
+                     x+=10;
+                     if(x>shapeCanvas.width){
+                         line++;
+                         x=5;
+                         y+=10;
+                         i = 10 * 4 * shapeCanvas.width * line;
+                     }
+                 }
+                 return renderDot;
+             }
+            return {
+                text:text
             }
-            x+=10;
-        }
+        };
+
+
+
+     var renderDot;
      var z=0;
      function animate(){
-         context.clearRect(0, 0, 700, 200);
+         var canvas = document.getElementById('canvas');
+         var  context = canvas.getContext('2d');
+         context.clearRect(0, 0, canvas.width, canvas.height);
          for(var j=0;j<renderDot.length;j++){
-             renderDot[j].sx = renderDot[j].sx + renderDot[j].dx;
-             renderDot[j].sy = renderDot[j].sy + renderDot[j].dy;
+             if(z=100){
+                 renderDot[j].sx = renderDot[j].x;
+                 renderDot[j].sy = renderDot[j].y;
+             }
+                else{
+                 renderDot[j].sx = renderDot[j].sx + renderDot[j].dx;
+                 renderDot[j].sy = renderDot[j].sy + renderDot[j].dy;
+             }
              context.fillStyle = "#ff0000";//返回的是 #000000类型
              context.beginPath();
              context.arc(renderDot[j].sx, renderDot[j].sy, 5, 0, 2 * Math.PI, true);
@@ -54,11 +102,15 @@
 
          }
          z++;
-         if(z<100){
+         if(z<=100){
              setTimeout(animate,10);
          }
      }
-       animate();
+
+    function start(){
+        renderDot = S.shape().text();
+        animate();
+    }
     </script>
 </body>
 </html>
