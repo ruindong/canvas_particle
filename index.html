@@ -81,8 +81,7 @@
                              sx:shapeCanvas.width/2,
                              sy:shapeCanvas.height/2,
                              dx:(x-(shapeCanvas.width/2))/100,
-                             dy:(y-(shapeCanvas.height/2))/100,
-                             a:1
+                             dy:(y-(shapeCanvas.height/2))/100
                          });
                      }
                      x+=10;
@@ -98,13 +97,9 @@
                     randomY = Math.floor(Math.random()*shapeCanvas.height);
                     console.log(randomX,randomY);
                        renderDot.push({
-                             x:randomX,
-                             y:randomY,
                              sx:randomX+Math.random()*2-1,
                              sy:randomY+Math.random()*2-1,
-                             dx:randomX,
-                             dy:randomY,
-                             a:0.5
+                             color:"rgba("+Math.floor(Math.random()*256)+","+Math.floor(Math.random()*256)+","+Math.floor(Math.random()*256)+",0.5)"
                          });
                  }
                  return renderDot;
@@ -123,7 +118,7 @@
          var  context = canvas.getContext('2d');
          context.clearRect(0, 0, canvas.width, canvas.height);
          for(var j=0;j<renderDot.length;j++){
-            if(renderDot[j].a === 1){
+            if(renderDot[j].x || renderDot[j].y){
                  if(z=100){
                  renderDot[j].sx = renderDot[j].x;
                  renderDot[j].sy = renderDot[j].y;
@@ -132,13 +127,14 @@
                  renderDot[j].sx = renderDot[j].sx + renderDot[j].dx;
                  renderDot[j].sy = renderDot[j].sy + renderDot[j].dy;
              }
-         
+              context.fillStyle = "#ff0000";
             }
             else{
                 renderDot[j].sx = (Math.random()*2-1)/2+renderDot[j].sx;
                 renderDot[j].sy = (Math.random()*2-1)/2+renderDot[j].sy;
+                context.fillStyle = renderDot[j].color;
             }
-             context.fillStyle = "rgba(255,0,0,"+renderDot[j].a+")";//返回的是 #000000类型
+            
              context.beginPath();
              context.arc(renderDot[j].sx, renderDot[j].sy, 5, 0, 2 * Math.PI, true);
              context.closePath();
