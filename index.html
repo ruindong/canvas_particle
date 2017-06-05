@@ -29,6 +29,7 @@
         line-height: 30px;
         color:#fff;
         text-align:center;
+        cursor: pointer;
     }
 </style>
     <canvas id="canvas"></canvas>
@@ -64,7 +65,8 @@
             function text(){
                 var value = document.getElementById("input").value;
                 console.log(shapeContext.measureText(value).width);
-                var fontSize = Math.min(Math.min(500,shapeCanvas.width,shapeCanvas.height)*0.45,shapeCanvas.width/shapeContext.measureText(value).width*0.8*500);
+                var fontSize = Math.min(Math.min(500,shapeCanvas.width,shapeCanvas.height)*0.45,shapeCanvas.width/shapeContext.measureText(value).width*10);
+                console.log(Math.min(500,shapeCanvas.width,shapeCanvas.height)*0.45,shapeCanvas.width/shapeContext.measureText(value).width*0.8*500);
                 shapeContext.font = 'bold ' + fontSize + 'px '+ 'Avenir, Helvetica Neue, Helvetica, Arial, sans-serif';
                 shapeContext.fillText(value,shapeCanvas.width/2,shapeCanvas.height/2);
                 return getDots();
